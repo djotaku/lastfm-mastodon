@@ -56,20 +56,12 @@ def get_last_fm_top_artists(secrets, args):
     # print "Plays:", topartists[0].weight
 
 
-def setup_twitter(secrets):
-    """Return twitter API to use for post."""
-    CONSUMER_KEY = secrets["twitter"]["consumer_key"]
-    CONSUMER_SECRET = secrets["twitter"]["consumer_secret"]
-    ACCESS_TOKEN_KEY = secrets["twitter"]["token_key"]
-    ACCESS_TOKEN_SECRET = secrets["twitter"]["token_secret"]
-    api = twitter.Twitter(auth=twitter.OAuth(consumer_key=CONSUMER_KEY,
-                                             consumer_secret=CONSUMER_SECRET,
-                                             token=ACCESS_TOKEN_KEY,
-                                             token_secret=ACCESS_TOKEN_SECRET))
+def setup_mastodon(secrets):
+    """Return Mastodon API to use for post."""
+    access_token = secrets.get("mastodon").get('access_token')
+    api_base_url = secrets.get("mastodon").get("api_base_url")
+    api = Mastdodon(access_token=access_token, api_base_url=api_base_url) 
     return api
-    # debugging
-    # print api.VerifyCredentials()
-
 
 def make_post(api, top_artists, args):
     """Post weekly or yearly top 3 artists to Twitter.
