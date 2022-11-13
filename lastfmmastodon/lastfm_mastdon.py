@@ -14,6 +14,7 @@ import sys
 from mastodon import Mastodon
 from xdgenvpy import XDGPackage
 
+
 def parse_args():
     """Parse the commandline arguments."""
     parser = argparse.ArgumentParser()
@@ -60,8 +61,9 @@ def setup_mastodon(secrets):
     """Return Mastodon API to use for post."""
     access_token = secrets.get("mastodon").get('access_token')
     api_base_url = secrets.get("mastodon").get("api_base_url")
-    api = Mastdodon(access_token=access_token, api_base_url=api_base_url) 
+    api = Mastodon(access_token=access_token, api_base_url=api_base_url)
     return api
+
 
 def make_post(api, top_artists, args):
     """Post weekly or yearly top 3 artists to Twitter.
@@ -76,16 +78,16 @@ def make_post(api, top_artists, args):
     :type args: cls argparse.Namespace
     """
     if args.yearly:
-        post = f"My top 3 #lastfm artists for the past 12 months: "\
-                    f"{top_artists[0].item}({str(top_artists[0].weight)}),"\
-                    f"{top_artists[1].item}({str(top_artists[1].weight)}),"\
-                    f"{top_artists[2].item}({str(top_artists[2].weight)})"
+        post = f"My top 3 #lastfm artists for the past 12 months: " \
+               f"{top_artists[0].item}({str(top_artists[0].weight)})," \
+               f"{top_artists[1].item}({str(top_artists[1].weight)})," \
+               f"{top_artists[2].item}({str(top_artists[2].weight)})"
 
     else:
-        post = f"My top 3 #lastfm artists for the past 7 days: "\
-                    f"{top_artists[0].item}({str(top_artists[0].weight)}),"\
-                    f"{top_artists[1].item}({str(top_artists[1].weight)}),"\
-                    f"{top_artists[2].item}({str(top_artists[2].weight)})"
+        post = f"My top 3 #lastfm artists for the past 7 days: " \
+               f"{top_artists[0].item}({str(top_artists[0].weight)})," \
+               f"{top_artists[1].item}({str(top_artists[1].weight)})," \
+               f"{top_artists[2].item}({str(top_artists[2].weight)})"
     status = api.statuses.update(status=post)
     print(status)
 
