@@ -2,9 +2,9 @@
 """Post top 3 artists from last.fm to Twitter."""
 
 __author__ = "Eric Mesa"
-__version__ = "0.7.3"
+__version__ = "0.0.1"
 __license__ = "GNU GPL v3.0"
-__copyright__ = "(c) 2010-2020 Eric Mesa"
+__copyright__ = "(c) 2022 Eric Mesa"
 __email__ = "ericsbinaryworld at gmail dot com"
 
 import argparse
@@ -12,6 +12,11 @@ import json
 import pylast  # type: ignore
 import sys
 import twitter  # type: ignore
+
+# Note to self for Mastodon
+# - use Mastodon.py
+# - use xdgenvpy to store secrets, including from Mastodon
+# - create helper script to create the app the first time
 
 
 def parse_args():
