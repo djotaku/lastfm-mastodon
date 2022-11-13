@@ -32,7 +32,7 @@ def get_secrets() -> dict:
     :return: A dictionary containing the secrets read from the JSON file.
     """
     xdg = XDGPackage('lastfm_mastodon')
-    path = xdg.XDG_CONFIG_HOME
+    path = f"{xdg.XDG_CONFIG_HOME}/secrets.json"
     try:
         with open(path) as file:
             return json.load(file)
@@ -46,8 +46,9 @@ def get_last_fm_top_artists(secrets, args):
     """Return top artists from last.fm."""
     api_key = secrets.get("lastfm").get("key")
     api_secret = secrets.get("lastfm").get("secret")
+    username = secrets.get("lastfm").get("username")
     network = pylast.LastFMNetwork(api_key=api_key, api_secret=api_secret)
-    user = network.get_user("djotaku")
+    user = network.get_user(username)
     if args.yearly:
         return user.get_top_artists(period='12month')
     else:
