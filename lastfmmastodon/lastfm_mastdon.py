@@ -11,12 +11,8 @@ import argparse
 import json
 import pylast  # type: ignore
 import sys
-import twitter  # type: ignore
-
-# Note to self for Mastodon
-# - use Mastodon.py
-# - use xdgenvpy to store secrets, including from Mastodon
-
+from mastodon import Mastodon
+from xdgenvpy import XDGPackage
 
 def parse_args():
     """Parse the commandline arguments."""
@@ -26,30 +22,22 @@ def parse_args():
                        help="post your top weekly artists (default)")
     group.add_argument("-y", "--yearly", action="store_true",
                        help="post your top yearly artists")
-    parser.add_argument("-j", "--json",
-                        help="optional path to secrets.json file with\
-                        api keys")
     return parser.parse_args()
 
 
-def get_secrets(secret_location: str) -> dict:
+def get_secrets() -> dict:
     """Return the secrets needed to connect to twitter and last.fm
-
-    :param secret_location: the folder containing the secrets.json file.
 
     :return: A dictionary containing the secrets read from the JSON file.
     """
-    if secret_location:
-        path = f"{secret_location}/secrets.json"
-    else:
-        path = "secrets.json"
+    path = xdg.XDG_CONFIG_HOME
     try:
         with open(path) as file:
             secrets = json.load(file)
             return secrets
     except FileNotFoundError:
         sys.tracebacklimit = 0
-        print("Could not find secrets.json! Did you give the right path?")
+        print(f"Could not find secrets.json! Make sure to place it in {path}")
         raise
 
 
@@ -113,7 +101,8 @@ def make_post(api, top_artists, args):
 def main():
     """Run the loop."""
     args = parse_args()
-    secrets = get_secrets(args.json)
+    xdg = XDGPackage('lastfmmastodon')
+    secrets = get_secrets()
     top_artists = get_last_fm_top_artists(secrets, args)
     twitter_api = setup_twitter(secrets)
     make_post(twitter_api, top_artists, args)
