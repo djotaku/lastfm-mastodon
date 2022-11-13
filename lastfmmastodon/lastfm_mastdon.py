@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Post top 3 artists from last.fm to Twitter."""
+"""Post top 3 artists from last.fm to Mastodon."""
 
 __author__ = "Eric Mesa"
 __version__ = "0.0.1"
