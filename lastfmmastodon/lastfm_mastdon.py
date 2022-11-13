@@ -16,7 +16,6 @@ import twitter  # type: ignore
 # Note to self for Mastodon
 # - use Mastodon.py
 # - use xdgenvpy to store secrets, including from Mastodon
-# - create helper script to create the app the first time
 
 
 def parse_args():
