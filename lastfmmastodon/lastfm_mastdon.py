@@ -31,11 +31,11 @@ def get_secrets() -> dict:
 
     :return: A dictionary containing the secrets read from the JSON file.
     """
+    xdg = XDGPackage('lastfm_mastodon')
     path = xdg.XDG_CONFIG_HOME
     try:
         with open(path) as file:
-            secrets = json.load(file)
-            return secrets
+            return json.load(file)
     except FileNotFoundError:
         sys.tracebacklimit = 0
         print(f"Could not find secrets.json! Make sure to place it in {path}")
@@ -44,35 +44,29 @@ def get_secrets() -> dict:
 
 def get_last_fm_top_artists(secrets, args):
     """Return top artists from last.fm."""
-    API_KEY = secrets["lastfm"]["key"]
-    API_SECRET = secrets["lastfm"]["secret"]
-    network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET)
+    api_key = secrets.get("lastfm").get("key")
+    api_secret = secrets.get("lastfm").get("secret")
+    network = pylast.LastFMNetwork(api_key=api_key, api_secret=api_secret)
     user = network.get_user("djotaku")
     if args.yearly:
         return user.get_top_artists(period='12month')
     else:
         return user.get_top_artists(period='7day')
-    # debugging
-    # print "Artist:", topartists[0].item
-    # print "Plays:", topartists[0].weight
 
 
 def setup_mastodon(secrets):
     """Return Mastodon API to use for post."""
     access_token = secrets.get("mastodon").get('access_token')
     api_base_url = secrets.get("mastodon").get("api_base_url")
-    api = Mastodon(access_token=access_token, api_base_url=api_base_url)
-    return api
+    return Mastodon(access_token=access_token, api_base_url=api_base_url)
 
 
-def make_post(api, top_artists, args):
-    """Post weekly or yearly top 3 artists to Twitter.
+def make_post(api, top_artists: list, args):
+    """Post weekly or yearly top 3 artists to Mastodon.
 
-    :param api: The twitter API setup in the setup_twitter function.
-    :type api: cls twitter..api.Api
+    :param api: The Mastodon API setup in the setup_mastodon function.
 
     :param top_artists: contains the top artists retrieved from last.fm API.
-    :type top_artists: list
 
     :param args: The args from the commandline, here used to determine yr|wk
     :type args: cls argparse.Namespace
@@ -88,18 +82,17 @@ def make_post(api, top_artists, args):
                f"{top_artists[0].item}({str(top_artists[0].weight)})," \
                f"{top_artists[1].item}({str(top_artists[1].weight)})," \
                f"{top_artists[2].item}({str(top_artists[2].weight)})"
-    status = api.statuses.update(status=post)
+    status = api.toot(post)
     print(status)
 
 
 def main():
     """Run the loop."""
     args = parse_args()
-    xdg = XDGPackage('lastfmmastodon')
     secrets = get_secrets()
     top_artists = get_last_fm_top_artists(secrets, args)
-    twitter_api = setup_twitter(secrets)
-    make_post(twitter_api, top_artists, args)
+    mastodon_api = setup_mastodon(secrets)
+    make_post(mastodon_api, top_artists, args)
 
 
 if __name__ == "__main__":
