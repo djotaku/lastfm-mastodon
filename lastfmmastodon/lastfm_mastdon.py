@@ -74,14 +74,14 @@ def make_post(api, top_artists: list, args):
     """
     if args.yearly:
         post = f"My top 3 #lastfm artists for the past 12 months: " \
-               f"{top_artists[0].item}({str(top_artists[0].weight)})," \
-               f"{top_artists[1].item}({str(top_artists[1].weight)})," \
+               f"{top_artists[0].item}({str(top_artists[0].weight)}), " \
+               f"{top_artists[1].item}({str(top_artists[1].weight)}), " \
                f"{top_artists[2].item}({str(top_artists[2].weight)})"
 
     else:
         post = f"My top 3 #lastfm artists for the past 7 days: " \
-               f"{top_artists[0].item}({str(top_artists[0].weight)})," \
-               f"{top_artists[1].item}({str(top_artists[1].weight)})," \
+               f"{top_artists[0].item}({str(top_artists[0].weight)}), " \
+               f"{top_artists[1].item}({str(top_artists[1].weight)}), " \
                f"{top_artists[2].item}({str(top_artists[2].weight)})"
     status = api.toot(post)
     print(f"The following tweet was posted: {status.get('content')}")
