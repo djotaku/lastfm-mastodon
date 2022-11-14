@@ -2,7 +2,7 @@
 """Post top 3 artists from last.fm to Mastodon."""
 
 __author__ = "Eric Mesa"
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __license__ = "GNU GPL v3.0"
 __copyright__ = "(c) 2022 Eric Mesa"
 __email__ = "ericsbinaryworld at gmail dot com"
@@ -73,16 +73,23 @@ def make_post(api, top_artists: list, args):
     :type args: cls argparse.Namespace
     """
     if args.yearly:
-        post = f"My top 3 #lastfm artists for the past 12 months: " \
-               f"{top_artists[0].item}({str(top_artists[0].weight)}), " \
-               f"{top_artists[1].item}({str(top_artists[1].weight)}), " \
-               f"{top_artists[2].item}({str(top_artists[2].weight)})"
-
+        post = f"My top 3 #lastfm artists for the past 12 months: "
+        for position in range(len(top_artists)):
+            next_artist = f"{top_artists[position].item}({str(top_artists[position].weight)}), "
+            if len(post) + len(next_artist) < 500:
+                post += next_artist
+            else:
+                break
     else:
-        post = f"My top 3 #lastfm artists for the past 7 days: " \
-               f"{top_artists[0].item}({str(top_artists[0].weight)}), " \
-               f"{top_artists[1].item}({str(top_artists[1].weight)}), " \
-               f"{top_artists[2].item}({str(top_artists[2].weight)})"
+        post = f"My top #lastfm artists for the past 7 days: "
+        for position in range(len(top_artists)):
+            next_artist = f"{top_artists[position].item}({str(top_artists[position].weight)}), "
+            if len(post) + len(next_artist) < 500:
+                post += next_artist
+            else:
+                break
+        # remove the final comma and space
+        post = post[:-2]
     status = api.toot(post)
     print(f"The following tweet was posted: {status.get('content')}")
     print(f"You can find it at {status.get('url')}")
