@@ -84,7 +84,8 @@ def make_post(api, top_artists: list, args):
                f"{top_artists[1].item}({str(top_artists[1].weight)})," \
                f"{top_artists[2].item}({str(top_artists[2].weight)})"
     status = api.toot(post)
-    print(status)
+    print(f"The following tweet was posted: {status.get('content')}")
+    print(f"You can find it at {status.get('url')}")
 
 
 def main():
